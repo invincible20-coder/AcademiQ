@@ -1,0 +1,23 @@
+{
+  "name": "academiq",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "db:migrate": "cd apps/api && alembic upgrade head",
+    "db:generate": "cd apps/api && alembic revision --autogenerate"
+  },
+  "devDependencies": {
+    "turbo": "latest",
+    "prettier": "^3.3.0"
+  },
+  "packageManager": "npm@11.6.0"
+}
