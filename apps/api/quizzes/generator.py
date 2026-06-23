@@ -3,9 +3,9 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
-from database.connection import get_db
+from database.connection import get_db, AsyncSessionLocal
 from database.models import QuizStatus, Difficulty, QuestionType
-from ai.qdrant import get_qdrant_client, get_embeddings, COLLECTION_NAME
+from ai.qdrant import get_qdrant_client, get_embeddings, get_collection_name
 from qdrant_client.models import Filter, FieldCondition, MatchValue
 from .repository import QuizRepository
 
@@ -39,17 +39,18 @@ async def generate_quiz_background(
         # Or if we just want random chunks from the doc, we can query with a generic prompt
         query_vector = await embeddings.aembed_query(title)
         
-        must_filters = [FieldCondition(key="user_id", match=MatchValue(value=str(user_id)))]
+        must_filters = []
         if document_id:
             must_filters.append(FieldCondition(key="document_id", match=MatchValue(value=str(document_id))))
         elif course_id:
             must_filters.append(FieldCondition(key="course_id", match=MatchValue(value=str(course_id))))
             
         # Limit to retrieving e.g. 10 chunks to base the quiz off of
+        collection_name = get_collection_name(str(user_id))
         results = client.search(
-            collection_name=COLLECTION_NAME,
+            collection_name=collection_name,
             query_vector=query_vector,
-            query_filter=Filter(must=must_filters),
+            query_filter=Filter(must=must_filters) if must_filters else None,
             limit=10
         )
         
@@ -90,7 +91,7 @@ Context:
         quiz_data = response.questions
         
         # 3. Save to Database
-        async for session in get_db():
+        async with AsyncSessionLocal() as session:
             repo = QuizRepository(session)
             
             # Prepare questions
@@ -108,11 +109,9 @@ Context:
                 
             await repo.add_questions(quiz_id, db_questions)
             await repo.update_status(quiz_id, QuizStatus.ready)
-            break
             
     except Exception as e:
         print(f"Quiz Generation Error: {e}")
-        async for session in get_db():
+        async with AsyncSessionLocal() as session:
             repo = QuizRepository(session)
             await repo.update_status(quiz_id, QuizStatus.failed)
-            break

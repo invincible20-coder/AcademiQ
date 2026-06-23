@@ -1,0 +1,227 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+@import "tailwindcss";
+
+/* ── AcademIQ Design System ───────────────────────────────────────────────── */
+
+@theme inline {
+  /* Typography */
+  --font-display: "Outfit", sans-serif;
+  --font-sans: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Color Palette — Dark First */
+  --color-bg-base:       #0A0A0F;
+  --color-bg-elevated:   #111118;
+  --color-bg-card:       #1A1A27;
+  --color-bg-card-hover: #1F1F2E;
+
+  --color-border:        #2D2D45;
+  --color-border-hover:  #4A4A70;
+  --color-border-active: #7C3AED;
+
+  --color-accent:        #7C3AED;
+  --color-accent-light:  #9D5CF6;
+  --color-accent-glow:   rgba(124, 58, 237, 0.25);
+  --color-blue:          #2563EB;
+  --color-blue-light:    #3B82F6;
+  --color-pink:          #EC4899;
+  --color-success:       #10B981;
+  --color-warning:       #F59E0B;
+  --color-danger:        #EF4444;
+
+  --color-text-primary:   #F8FAFC;
+  --color-text-secondary: #94A3B8;
+  --color-text-muted:     #64748B;
+
+  /* Shadows */
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 40px rgba(124, 58, 237, 0.15);
+}
+
+/* ── Base Reset ───────────────────────────────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg-base);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Typography ───────────────────────────────────────────────────────────── */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+code, pre {
+  font-family: var(--font-mono);
+}
+
+/* ── Glassmorphism Utility ────────────────────────────────────────────────── */
+
+.glass {
+  background: rgba(26, 26, 39, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border);
+}
+
+.glass-strong {
+  background: rgba(17, 17, 24, 0.85);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(45, 45, 69, 0.8);
+}
+
+/* ── Gradient Border ──────────────────────────────────────────────────────── */
+
+.gradient-border {
+  position: relative;
+  background: var(--color-bg-card);
+  border-radius: 12px;
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #7C3AED, #2563EB, #EC4899);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gradient-border:hover::before {
+  opacity: 1;
+}
+
+/* ── Glow Effects ─────────────────────────────────────────────────────────── */
+
+.glow-purple {
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.3), 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+.glow-blue {
+  box-shadow: 0 0 30px rgba(37, 99, 235, 0.3), 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-hover);
+}
+
+/* ── AI Stream Typing Animation ──────────────────────────────────────────── */
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.ai-cursor::after {
+  content: "▋";
+  display: inline-block;
+  animation: cursor-blink 1s ease-in-out infinite;
+  color: var(--color-accent);
+  margin-left: 2px;
+}
+
+/* ── Streak Flame Animation ───────────────────────────────────────────────── */
+
+@keyframes flame-flicker {
+  0%, 100% { transform: scale(1) rotate(-3deg); }
+  50% { transform: scale(1.1) rotate(3deg); }
+}
+
+.flame {
+  display: inline-block;
+  animation: flame-flicker 0.8s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+/* ── Progress Bar ─────────────────────────────────────────────────────────── */
+
+.progress-bar {
+  height: 6px;
+  background: var(--color-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-blue-light));
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Status Badges ────────────────────────────────────────────────────────── */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.badge-pending  { background: rgba(245,158,11,0.15); color: #F59E0B; border: 1px solid rgba(245,158,11,0.3); }
+.badge-done     { background: rgba(16,185,129,0.15);  color: #10B981; border: 1px solid rgba(16,185,129,0.3); }
+.badge-overdue  { background: rgba(239,68,68,0.15);   color: #EF4444; border: 1px solid rgba(239,68,68,0.3); }
+.badge-active   { background: rgba(124,58,237,0.15);  color: #9D5CF6; border: 1px solid rgba(124,58,237,0.3); }
+
+/* ── Page Transitions ─────────────────────────────────────────────────────── */
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* ── Background Mesh ──────────────────────────────────────────────────────── */
+
+.bg-mesh {
+  background:
+    radial-gradient(ellipse 800px 600px at 20% -10%, rgba(124, 58, 237, 0.12), transparent 60%),
+    radial-gradient(ellipse 600px 400px at 80% 30%,  rgba(37, 99, 235, 0.08),  transparent 55%),
+    radial-gradient(ellipse 400px 300px at 50% 100%, rgba(236, 72, 153, 0.06), transparent 50%),
+    var(--color-bg-base);
+}

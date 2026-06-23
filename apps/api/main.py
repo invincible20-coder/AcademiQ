@@ -1,6 +1,7 @@
 """
 AcademIQ API — Main Application Entry Point
 """
+import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -30,6 +31,12 @@ async def lifespan(app: FastAPI):
     """Startup and shutdown lifecycle."""
     # Startup
     await init_db()
+    
+    from ai.qdrant import get_qdrant_client
+    get_qdrant_client()
+    if int(os.environ.get("WEB_CONCURRENCY", "1")) > 1:
+        print("⚠️ WARNING: Local-file Qdrant is incompatible with multi-process Uvicorn workers.")
+        
     print(f"✅ AcademIQ API started — environment: {settings.ENVIRONMENT}")
     yield
     # Shutdown

@@ -61,9 +61,6 @@ async def get_current_user(
             detail="Invalid or expired token",
         )
 
-    payload = response.json()
-    clerk_id = payload.get("sub")
-
     if not clerk_id:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

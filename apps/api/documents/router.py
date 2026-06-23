@@ -1,7 +1,7 @@
 import uuid
 import os
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, BackgroundTasks, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from database.connection import get_db
@@ -71,8 +71,8 @@ from .schemas import DocumentResponse, DocumentPaginatedResponse
 @router.get("/", response_model=DocumentPaginatedResponse)
 async def list_documents(
     course_id: Optional[uuid.UUID] = None,
-    limit: int = 50,
-    offset: int = 0,
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
     current_user: User = Depends(get_current_user),
     repo: DocumentRepository = Depends(get_document_repository)
 ):

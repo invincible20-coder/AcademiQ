@@ -5,8 +5,8 @@ from langchain_qdrant import QdrantVectorStore
 from qdrant_client.models import PointStruct
 from pypdf import PdfReader
 
-from ai.qdrant import get_qdrant_client, get_embeddings, COLLECTION_NAME, init_qdrant
-from database.connection import get_db
+from ai.qdrant import get_qdrant_client, get_embeddings, get_collection_name, init_qdrant
+from database.connection import get_db, AsyncSessionLocal
 from database.models import DocumentStatus
 from .repository import DocumentRepository
 
@@ -29,7 +29,7 @@ async def process_document_background(
     file_type: str
 ):
     # Initialize Qdrant collection if not exists
-    init_qdrant()
+    init_qdrant(str(user_id))
 
     try:
         # 1. Extract Text
@@ -74,20 +74,18 @@ async def process_document_background(
 
         if points:
             q_client.upsert(
-                collection_name=COLLECTION_NAME,
+                collection_name=get_collection_name(str(user_id)),
                 points=points
             )
 
         # 4. Update Database
-        async for session in get_db():
+        async with AsyncSessionLocal() as session:
             repo = DocumentRepository(session)
             await repo.save_chunks(doc_id, chunks_data)
             await repo.update_status(doc_id, DocumentStatus.ready)
-            break # only one session needed
 
     except Exception as e:
         print(f"Error processing document {doc_id}: {e}")
-        async for session in get_db():
+        async with AsyncSessionLocal() as session:
             repo = DocumentRepository(session)
             await repo.update_status(doc_id, DocumentStatus.failed)
-            break
